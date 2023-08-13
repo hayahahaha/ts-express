@@ -1,10 +1,19 @@
-import * as express from 'express';
+import 'dotenv/config';
+import 'reflect-metadata';
+import App from './app';
+import config from './ormconfig';
+import PostController from './post/post.controller';
+import validateEnv from './utils/validateEnv';
+import { AppDataSource } from './data-source';
 
-const app = express();
+// validateEnv();
 
-app.get('/', (request, response) => {
-  response.send('Hello world!');
-});
-
-app.listen(5000);
-
+(async () => {
+  const app = new App(
+    [
+      new PostController(),
+    ],
+    3000
+  );
+  app.listen();
+})();
