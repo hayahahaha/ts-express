@@ -1,8 +1,9 @@
-import "reflect-metadata"
-import { DataSource } from "typeorm"
-import User from "./user/user.entity"
-import Post from './post/post.entity'
-import Address from './address/address.entity'
+import "reflect-metadata";
+import { DataSource } from "typeorm";
+import User from "./users/user.entity";
+import Post from './post/post.entity';
+import Address from './address/address.entity';
+import Category from './category/category.entity';
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -13,7 +14,7 @@ export const AppDataSource = new DataSource({
   database: "nest",
   synchronize: true,
   logging: false,
-  entities: [User, Post, Address],
+  entities: [User, Post, Address, Category],
   migrations: [],
   subscribers: [],
 })

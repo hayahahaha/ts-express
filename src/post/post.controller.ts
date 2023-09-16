@@ -6,8 +6,8 @@ import HttpException from '../exceptions/HttpException';
 import PostNotFoundException from '../exceptions/PostNotFoundException';
 import validationMiddleware from '../middleware/validation.middleware';
 import Post from './post.entity';
-import User from '../user/user.entity';
-
+import User from '../users/user.entity';
+import authMiddleware from '../middleware/auth.middleware';
 
 class PostsController {
   public path = '/posts';
@@ -17,7 +17,6 @@ class PostsController {
 
   private posts: PostInterface[] = [
     {
-      author: 'Marcin',
       content: 'Dolor sit amet',
       title: 'Lorem Ipsum',
     }
@@ -29,10 +28,12 @@ class PostsController {
 
   public intializeRoutes() {
     this.router.get(this.path, this.getPosts);
-    this.router.post(this.path, validationMiddleware(CreatePostDto), this.createPost);
     this.router.get(`${this.path}/:id`, this.getPostById)
-    this.router.patch(`${this.path}/:id`, validationMiddleware(CreatePostDto, true), this.modifyPost)
-    this.router.delete(`${this.path}/:id`, this.deletePost)
+    this.router
+      .all(`${this.path}/*`, authMiddleware)
+      .patch(`${this.path}/:id`, validationMiddleware(CreatePostDto, true), this.modifyPost)
+      .delete(`${this.path}/:id`, this.deletePost)
+      .post(this.path, authMiddleware, validationMiddleware(CreatePostDto), this.createPost);
   }
 
   private getPosts = async (request: Request, response: Response) => {
@@ -53,14 +54,12 @@ class PostsController {
   }
 
   private createPost = async (request: Request, response: Response) => {
-    console.log('create Post:', request.body);
     const postData: CreatePostDto = request.body;
-    const post = new Post();
-    post.author = postData.author;
-    post.content = postData.content;
-    post.title = postData.title;
 
-    const newPost = this.postRepository.create(post);
+    const newPost = this.postRepository.create({
+      ...postData,
+      author: request.user
+    });
     await this.postRepository.save(newPost);
     response.json(newPost);
   }

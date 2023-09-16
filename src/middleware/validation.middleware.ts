@@ -8,11 +8,13 @@ function validationMiddleware<T>(type: any, skipMissingProperties = false): expr
     validate(plainToClass(type, req.body), { skipMissingProperties })
       .then((errors: ValidationError[]) => {
         if (errors.length > 0) {
+          console.log('error:', errors);
           const message = errors.map((error: ValidationError) => {
             return Object.values(error.constraints);
           }).join(', ');
           next(new HttpException(400, message));
         } else {
+          console.log('hellow world')
           next();
         }
       })

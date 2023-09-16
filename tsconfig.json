@@ -8,7 +8,10 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    // "paths" : {
+    //   "usersr*" : ["./src/users/*"]      
+    // }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"],

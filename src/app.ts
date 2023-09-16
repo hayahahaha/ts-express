@@ -1,5 +1,6 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import * as cookieParser from 'cookie-parser';
 import { AppDataSource } from './data-source';
 import errorMiddleware from './middleware/error.middleware';
 import "reflect-metadata"
@@ -13,7 +14,7 @@ class App {
   public app: express.Application;
   public port: number;
 
-  constructor(controllers, port) {
+  constructor(controllers: any, port: number) {
     this.app = express();
     this.port = port;
 
@@ -25,11 +26,12 @@ class App {
 
   private initializeMiddlewares() {
     this.app.use(bodyParser.json());
+    this.app.use(cookieParser());
     this.app.use(loggerMiddleware)
   }
 
-  private initializeControllers(controllers) {
-    controllers.forEach((controller) => {
+  private initializeControllers(controllers: any) {
+    controllers.forEach((controller: any) => {
       this.app.use('/', controller.router);
     });
   }
